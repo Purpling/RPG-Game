@@ -2,6 +2,7 @@ game = {}
 game.libs = {}
 game.file = {}
 game.hook = {}
+game.info = {}
 
 function game.clear()
     local a,b = os.execute("clear") if a==1 then
@@ -93,7 +94,6 @@ end
 
 
 
-local a,b = game.file.exists("info") if not a then return end
 local libs = {"mainmenu"}
 a,b = game.file.exists("libs") if not a then return end
 local rtn = false for k,v in pairs(libs) do
