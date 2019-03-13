@@ -1,0 +1,52 @@
+() = Command parameters.
+[] = Variable types.
+{} = Non-required parameter.
+#  = Returned values.
+
+Commands are stored like:
+game.file.include("file.lua")
+game.count({1,"2",{3,"4"}})
+
+Errors are handled #bool,string
+where bool is true,false,nil and
+string is the error message or nil.
+
+
+Game:
+
+	Print(table1,{number1})			--Prints a table.
+	Count(table1)#bool1,number1		--Counts items in table, returns number1 as count.
+	Explode(string1)#bool1,table1	--Explodes the string.
+	Clear()#bool1					--Clears the screen.
+	Pause()#bool1					--Pauses till enter pressed.
+	Error(bool1,data1)#data2		--Uses bool1 to process data1, returns data2 as data1 or nil.
+
+	File:
+
+		Run(string1)#bool1,string1				--Executes string1 file.
+		Exists(string1)#bool1,string1			--Checks string1 file/folder existing.
+		Directory(string1)#bool1,string1		--Creates string1 folder.
+		Create(string1)#bool1,file1				--Creates string1 file.
+		Temp()#bool1,file1						--Returns a temp file.
+		Read(string1)#bool1,string2				--Reads string1 file, returns string2 as contents.
+		Write(string1,string2)#bool1,string3	--Writes string2 to file string1.
+		Append(string1,string2)#bool1,string3	--Appends string2 to file string1.
+		Delete(string1)#bool1,string2			--Deletes file/folder string1.
+		Destroy(string1)#bool1,string2			--Blanks the string1 file then deletes it.
+		Rename(string1,string2)#bool1,string3	--Sets the name of string1 file/folder to string2.
+		Include(string1)#bool1,string2			--Runs the code of string1 file in this file.
+
+	Libs:
+
+		Mainmenu:
+
+			New()			--Menu for making a new save.
+			Load()			--Menu for loading a save.
+			Options()		--Not finished#####
+			Editor()		--Not finished#####
+			Start()			--Menu at game launch.
+			Default[table1]	--Holds default userdata.
+
+	Info:
+
+		

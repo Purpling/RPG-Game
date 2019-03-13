@@ -4,10 +4,82 @@ game.file = {}
 game.hook = {}
 game.info = {}
 
+
+function game.print(a,b)
+    if not type(a)=="table" then return nil,"Arg1 is not a table." end
+    if not type(b)=="number" then return nil,"Arg2 is not a number." end
+    b = b or 0 local c = "" for i=1,b do c = c.."  " end local d = game.count(a)
+    local e = 0 for k,v in pairs(a) do e = e + 1
+        if type(v)=="table" then
+            if type(v)=="string" then
+                print(c.."\""..k.."\":{")
+            else
+                print(c..k..":{")
+            end
+            game.print(v,b+1)
+            if e==d then
+                print(c.."}")
+            else
+                print(c.."},")
+            end
+        else
+            if e==d then
+                print(c..k..":"..v)
+            else
+                print(c..k..":"..v..",")
+            end
+        end
+    end
+end
+
+function game.count(a)
+    if not type(a)=="table" then return nil,"Arg1 is not a table." end
+    local b = 0
+    for k,v in pairs(a) do
+        b = b + 1
+    end
+    return true,b
+end
+
+function game.explode(a)
+    if not type(a)=="string" then return nil,"Arg1 is not a string." end
+    local b = {}
+    for i=1,string.len(a) do
+        b[i] = string.sub(a,i,i)
+    end
+    return true,b
+end
+
 function game.clear()
-    local a,b = os.execute("clear") if a==1 then
-    a,b = os.execute("cls") if a==1 then
+    local a,b = os.execute("clear") if a==nil then
+    a,b = os.execute("cls") if a==nil then
     for i = 1,25 do print("\n\n") end end end
+    return true
+end
+
+function game.pause()
+    print("Paused, press enter to unpause.") io.flush() local a = io.read() return true,a
+end
+
+function game.error(a,b)
+    
+    local c = nil
+    if a==nil then
+    elseif a==false then
+    elseif a==true then
+        c = b
+    else
+
+    end
+    return c
+end
+
+function game.file.run(a)
+    if not type(a)=="string" then return nil,"Arg1 is not a string." end
+    local b,c = os.execute("open "..a)
+    if b==1 then b,c = os.execute("xdg-open "..a) end
+    if b==1 then b,c = os.execute("start "..a) end
+    return b,c
 end
 
 function game.file.exists(a)
@@ -36,21 +108,21 @@ end
 
 function game.file.read(a)
     if not type(a)=="string" then return nil,"Arg1 is not a string." end
-    local b = io.open(a,"w") io.close(b)
-    return true,b
+    local b = io.open(a,"r") local c = b:read() io.close(b)
+    return true,c
 end
 
 function game.file.write(a,b)
     if not type(a)=="string" then return nil,"Arg1 is not a string." end
     if not type(b)=="string" and not type(b)=="number" then return nil,"Arg2 is not a string." end
-    local c = io.open(a,"w") c:write(b,"w") io.close(c)
+    local c = io.open(a,"w") c:write(b,"") io.close(c)
     return true,c
 end
 
 function game.file.append(a,b)
     if not type(a)=="string" then return nil,"Arg1 is not a string." end
     if not type(b)=="string" and not type(b)=="number" then return nil,"Arg2 is not a string." end
-    local c = io.open(a,"a") c:write(b,"a") io.close(c)
+    local c = io.open(a,"a") c:write(b,"") io.close(c)
     return true,c
 end
 
@@ -94,7 +166,19 @@ end
 
 
 
-local libs = {"mainmenu"}
+game.info.head = {}
+game.info.chest = {}
+game.info.legs = {}
+game.info.boots = {}
+game.info.gloves = {}
+game.info.primary = {}
+game.info.secondary = {}
+game.info.cape = {}
+game.info.ring = {}
+game.info.neck = {}
+game.info.quiver = {}
+
+local libs = {"mainmenu","leveldisplay","datacryption"}
 a,b = game.file.exists("libs") if not a then return end
 local rtn = false for k,v in pairs(libs) do
     local a,b = game.file.include("libs/"..v..".lua")
@@ -106,9 +190,12 @@ a,b = game.file.exists("logs") if not a then game.file.directory("logs") end
 a,b = game.file.exists("data") if not a then game.file.directory("data") end
 
 a,b = game.file.exists("mods") if not a then
+    local slots = {["head"]=true,["chest"]=true,["legs"]=true,["boots"]=true,["gloves"]=true,["primary"]=true,["secondary"]=true,["cape"]=true,["ring"]=true,["neck"]=true,["quiver"]=true}
     game.mods = {}
-    -- add mod support here
+    
 end
+
+
 
 
 
