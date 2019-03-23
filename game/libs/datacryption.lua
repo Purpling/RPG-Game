@@ -33,11 +33,17 @@ function game.libs.datacryption.jsontable(a)
             end
             if v=="{" then g = g + 1 elseif v=="}" then g = g - 1 end
             if v=="," and g==0 then
-                c[tonumber(string.sub(a,d,e-1)) or string.sub(a,d+1,e-2)] = tonumber(string.sub(a,e+1,k-1)) or string.sub(a,e+1,k-1)
+                local h = tonumber(string.sub(a,d,e-1)) or string.sub(a,d+1,e-2)
+                local i = tonumber(string.sub(a,e+1,k-1)) or string.sub(a,e+1,k-1)
+                if string.sub(i,1,1)=="\"" and string.sub(i,-1,-1)=="\"" then i = string.sub(i,2,-2) end
+                c[h] = i
                 d = k+1 f = true
             end
             if k==string.len(a)-1 then
-                c[tonumber(string.sub(a,d,e-1)) or string.sub(a,d+1,e-2)] = tonumber(string.sub(a,e+1,k)) or string.sub(a,e+1,k)
+                local h = tonumber(string.sub(a,d,e-1)) or string.sub(a,d+1,e-2)
+                local i = tonumber(string.sub(a,e+1,k)) or string.sub(a,e+1,k)
+                if string.sub(i,1,1)=="\"" and string.sub(i,-1,-1)=="\"" then i = string.sub(i,2,-2) end
+                c[h] = i
                 d = k+1 f = true
             end
         end
@@ -61,20 +67,40 @@ local fiik = {
 
 local _,foon = game.explode("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-for i=1,15 do
+for i=1,30 do
     for k,v in pairs(foon) do
-        local ll = "FMGWD"
         local rn = math.random(1,5)
-        local rt = string.sub(ll,rn,rn)
         fiik[v..i] = {
             ["data"] = {},
             ["name"] = "",
-            ["icon"] = rt
+            ["icon"] = string.sub("FMGWD",rn,rn)
         }
     end
 end
 
+local fcck = {}
+for n=1,7 do
+    for i=1,5 do
+        fcck[n.."|"..i] = {}
+        -- for g=1,4 do
+
+        -- end
+    end
+end
+
+local fuuk = {}
+for n=1,7 do
+    for i=1,5 do
+        fuuk[n.."|"..i] = {}
+        -- for g=1,4 do
+
+        -- end
+    end
+end
+
 local idfk = {
+    ["inv"] = fcck,
+    ["equ"] = fuuk,
     ["map"] = fiik
 }
 

@@ -5,6 +5,41 @@ game.hook = {}
 game.info = {}
 
 
+
+function game.exe2bool(a,b,c)
+    if a==0 or b==0 or c==0 then
+    return true else
+    return false end
+end
+
+game.os = ""
+if game.exe2bool(os.execute("ipconfig")) then game.os = "windows" end
+if game.exe2bool(os.execute("ifconfig")) then game.os = "linux" end
+-- if game.exe2bool(os.execute("")) then game.os = "mac" end
+
+game.cd = ""
+os.execute("cd >tmp")
+local file = io.open("tmp","r")
+game.cd = file:read()
+file:close()
+os.remove("tmp")
+
+
+
+function game.string2table(a,z) z = z or "\n"
+    if not type(a)=="string" then return nil,"Arg1 is not a string." end
+    if not type(z)=="string" then return nil,"Arg2 is not a string." end
+    local b,c,d = "",{},0
+    for i=1,string.len(a) do
+        if string.sub(a,i,i)==z then
+            d = d + 1 c[d] = b b = ""
+        else
+            b = b..string.sub(a,i,i)
+        end
+    end if b=="" then else d = d + 1 c[d] = b end
+    return true,c
+end
+
 function game.print(a,b)
     if not type(a)=="table" then return nil,"Arg1 is not a table." end
     if not type(b)=="number" then return nil,"Arg2 is not a number." end
@@ -62,24 +97,35 @@ function game.pause()
 end
 
 function game.error(a,b)
-    
-    local c = nil
-    if a==nil then
-    elseif a==false then
-    elseif a==true then
-        c = b
+    if not type(a)=="boolean" then return nil,"Arg1 is not a bool." end
+    if a then
+        return b
     else
-
+        return nil
     end
-    return c
 end
 
 function game.file.run(a)
     if not type(a)=="string" then return nil,"Arg1 is not a string." end
-    local b,c = os.execute("open "..a)
-    if b==1 then b,c = os.execute("xdg-open "..a) end
-    if b==1 then b,c = os.execute("start "..a) end
+    local b,c = false,nil
+    if game.os=="mac" then b,c = os.execute("open "..a) end
+    if game.os=="linux" then b,c = os.execute("xdg-open "..a) end
+    if game.os=="windows" then b,c = os.execute("start "..a) end
     return b,c
+end
+
+function game.file.execute(a)
+    if not type(a)=="string" then return nil,"Arg1 is not a string." end
+    os.execute(a.." >tmp")
+    local b = io.open("tmp","r")
+    local c = b:read("*a")
+    b:close()
+    os.remove("tmp")
+    if c==nil then
+        return false,c
+    else
+        return true,c
+    end
 end
 
 function game.file.exists(a)
@@ -97,7 +143,7 @@ end
 
 function game.file.create(a)
     if not type(a)=="string" then return nil,"Arg1 is not a string." end
-    local b = io.open(a,"w") b:write("","w") io.close(b)
+    local b = io.open(a,"w") b:write("") io.close(b)
     return true,b
 end
 
@@ -115,14 +161,14 @@ end
 function game.file.write(a,b)
     if not type(a)=="string" then return nil,"Arg1 is not a string." end
     if not type(b)=="string" and not type(b)=="number" then return nil,"Arg2 is not a string." end
-    local c = io.open(a,"w") c:write(b,"") io.close(c)
+    local c = io.open(a,"w") c:write(b) io.close(c)
     return true,c
 end
 
 function game.file.append(a,b)
     if not type(a)=="string" then return nil,"Arg1 is not a string." end
     if not type(b)=="string" and not type(b)=="number" then return nil,"Arg2 is not a string." end
-    local c = io.open(a,"a") c:write(b,"") io.close(c)
+    local c = io.open(a,"a") c:write(b) io.close(c)
     return true,c
 end
 
@@ -135,7 +181,7 @@ end
 
 function game.file.destroy(a)
     if not type(a)=="string" then return nil,"Arg1 is not a string." end
-    local b = io.open(a,"w") b:write("","w") io.close(b)
+    local b = io.open(a,"w") b:write("") io.close(b)
     local b,c = os.remove(a)
     if not b then print(c) end
     return b,c
@@ -154,6 +200,24 @@ function game.file.include(a)
     local b,c = pcall(dofile,a)
     if not b then print(c) end
     return b,c
+end
+
+function game.file.getfiles(a)
+    if not type(a)=="string" then return nil,"Arg1 is not a string." end
+    local b = ""
+    if game.os=="windows" then b = game.error(game.file.execute("dir \""..a.."\" /a:-d /b")) end
+    -- if game.os=="linux" then b = game.file.execute("dir /a:-d /b") end
+    -- if game.os=="mac" then b = game.file.execute("dir /a:-d /b") end
+    return true,game.error(game.string2table(b))
+end
+
+function game.file.getdirs(a)
+    if not type(a)=="string" then return nil,"Arg1 is not a string." end
+    local b = ""
+    if game.os=="windows" then b = game.error(game.file.execute("dir \""..a.."\" /a:d /b")) end
+    -- if game.os=="linux" then b = game.file.execute("dir /a:-d /b") end
+    -- if game.os=="mac" then b = game.file.execute("dir /a:-d /b") end
+    return true,game.error(game.string2table(b))
 end
 
 game.hook.call = {}
@@ -189,10 +253,27 @@ if rtn then return end
 a,b = game.file.exists("logs") if not a then game.file.directory("logs") end
 a,b = game.file.exists("data") if not a then game.file.directory("data") end
 
-a,b = game.file.exists("mods") if not a then
+if game.file.exists("mods") then
     local slots = {["head"]=true,["chest"]=true,["legs"]=true,["boots"]=true,["gloves"]=true,["primary"]=true,["secondary"]=true,["cape"]=true,["ring"]=true,["neck"]=true,["quiver"]=true}
     game.mods = {}
-    
+    a = game.error(game.file.getdirs(game.cd.."/mods"))
+    if game.file.exists("mods/order.txt") then
+        local b = game.libs.datacryption.jsontable(game.error(game.file.read("mods/order.txt")))
+        for k,v in pairs(b) do
+            game.mods[v] = {}
+            game.file.include("mods/"..v.."/mod.lua")
+            a[k] = nil
+        end
+        for k,v in pairs(a) do
+            game.mods[v] = {}
+            game.file.include("mods/"..v.."/mod.lua")
+        end
+    else
+        for k,v in pairs(a) do
+            game.mods[v] = {}
+            game.file.include("mods/"..v.."/mod.lua")
+        end
+    end
 end
 
 
