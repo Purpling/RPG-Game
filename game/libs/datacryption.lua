@@ -65,12 +65,10 @@ local fiik = {
     }
 }
 
-local _,foon = game.explode("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
-for i=1,30 do
-    for k,v in pairs(foon) do
+for i=1,25 do
+    for n=1,25 do
         local rn = math.random(1,5)
-        fiik[v..i] = {
+        fiik[i.."|"..n] = {
             ["data"] = {},
             ["name"] = "",
             ["icon"] = string.sub("FMGWD",rn,rn)
@@ -99,9 +97,11 @@ for n=1,7 do
 end
 
 local idfk = {
+    ["ply"] = {hp=100,xy={0,0}},
     ["inv"] = fcck,
     ["equ"] = fuuk,
     ["map"] = fiik
 }
 
 game.libs.mainmenu.default = game.libs.datacryption.tablejson(idfk)
+if game.error(game.file.exists("data/settings.dat")) then else game.file.write("data/settings.dat",game.libs.datacryption.tablejson({map=21,m2=false})) end

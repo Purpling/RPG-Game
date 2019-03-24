@@ -3,6 +3,7 @@ game.libs = {}
 game.file = {}
 game.hook = {}
 game.info = {}
+game.help = {}
 
 
 
@@ -224,6 +225,71 @@ game.hook.call = {}
 function game.hook.request()
     io.flush()
     return true,io.read()
+end
+
+game.help.menu = ""
+game.help.list = {}
+game.help.expl = {}
+function game.help.prnt(a)
+    game.clear()
+    if game.help.list[game.help.menu]==nil then
+        print("+---------------------+")
+        print("|  Menu has no help.  |")
+        print("+---------------------+")
+    else
+        if a==nil or a=="" then
+            print("+---------------------+")
+            print("| Menu commands list. |")
+            print("+---------------------+")
+            for k,v in pairs(game.help.list[game.help.menu]) do
+                print("| "..k.." = "..v.." |")
+            end
+            print("+---------------------+")
+        else print(a)
+            if game.help.list[game.help.menu][a]==nil then
+                print("+---------------------+")
+                print("| Command has no help. |")
+                print("+---------------------+")
+            else
+                local b = a
+                if string.len(a)<19 then
+                    for i=1,math.floor((19-string.len(a))/2) do b = " "..b end
+                    for i=1,math.ceil((19-string.len(a))/2) do b = b.." " end
+                end
+                print("+---------------------+")
+                print("| "..b.." |")
+                print("+---------------------+")
+                print("|     Discription:    |")
+                local d = "|"
+                for k,v in pairs(game.error(game.string2table(game.help.list[game.help.menu][a]," "))) do
+                    if k==1 then d = d..v else
+                    if string.len(v)<22-string.len(d) then d = d.." "..v else
+                        if string.len(d)<22 then local s = string.len(d)
+                            for i=1,22-s do d = d.." " end
+                        end
+                        print(d.."|") d = "|"..v
+                    end end
+                end
+                if string.len(d)<22 then local s = string.len(d)
+                    for i=1,22-s do d = d.." " end
+                end print(d.."|")
+                print("+---------------------+")
+                print("|      Examples:      |")
+                if game.help.expl[game.help.menu][a]==nil then else
+                    for k,v in pairs(game.help.expl[game.help.menu][a]) do
+                        local c = v
+                        if string.len(v)<17-string.len(k) then
+                            for i=1,math.floor(((17-string.len(k))-string.len(v))/2) do c = " "..c end
+                            for i=1,math.ceil(((17-string.len(k))-string.len(v))/2) do c = c.." " end
+                        end
+                        print("| "..k..". "..c.." |")
+                    end
+                end
+                print("+---------------------+")
+            end
+        end
+    end
+    game.pause()
 end
 
 
